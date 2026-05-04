@@ -122,6 +122,15 @@ gh pr review <N> --request-changes --body "<numbered list of blockers, each with
 gh pr review <N> --comment --body "<observations>"   # only when neither approve nor request-changes is right
 ```
 
+### Fallback when `gh pr review` fails
+
+If `gh pr review` fails (e.g. GitHub blocks self-review: "Can't request changes on your own pull request" or "Can't approve your own pull request"), do **not** signal `RUN_FAILED` and do not retry. Instead:
+
+1. Include the full review content in your final response before the signal line.
+2. Proceed to the outcome signal as normal (`RUN_OK` or `RUN_CHANGES_REQUESTED`).
+
+The orchestrator will post your final response as a comment, so the review content reaches the PR automatically.
+
 Forbidden commands (never run these):
 
 - `git commit`, `git push`, `git checkout`, `git reset`, `git tag`
@@ -141,6 +150,8 @@ The `Read`, `Bash`, `Grep` tool set in the manifest is intentional — `Write` a
 | `gh` or tool error | (no `gh pr review` call) | `RUN_FAILED: <error>` |
 
 `RUN_FAILED` is for tooling failure only. "The PR is bad" is `RUN_CHANGES_REQUESTED`, not `RUN_FAILED`.
+
+`gh pr review` failing due to self-review restrictions is **not** `RUN_FAILED` — follow the fallback in §6 and signal `RUN_OK` or `RUN_CHANGES_REQUESTED` as normal.
 
 A blocker is an issue that, if shipped, would violate an architect-skill rule, break a test, leak a secret, or land code outside the PR's stated scope. Style and naming preferences are nits, not blockers.
 
