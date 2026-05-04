@@ -1,0 +1,17 @@
+name: Code Reviewer
+slug: code-review
+description: Reviews open pull requests against architecture skills, posts review
+  comments via gh, and signals approve or changes-requested.
+mode: review_pr
+adapter_type: claude_code
+adapter_config:
+  model: claude-opus-4-6
+  max_tokens: 8096
+skills:
+  - react-architect
+  - fastapi-architect
+tools:
+  - Read
+  - Bash
+  - Grep
+heartbeat_interval_seconds: 0
