@@ -118,8 +118,44 @@ gh pr comment <N> --body "<one specific observation>"
 
 # Final review — choose ONE:
 gh pr review <N> --approve --body "<short summary of what you checked>"
-gh pr review <N> --request-changes --body "<numbered list of blockers, each with file:line>"
+gh pr review <N> --request-changes --body "<formatted blockers — see format below>"
 gh pr review <N> --comment --body "<observations>"   # only when neither approve nor request-changes is right
+```
+
+### Review body format
+
+When requesting changes, the body **must** use this exact format:
+
+```
+❌ Blockers
+
+<file>:<line> — <one-sentence description of the issue and what to do>
+
+<file> — <description> (omit :<line> when the issue is file-wide)
+
+<plain label> — <description> (for PR-level issues with no specific file, e.g. "PR body is empty")
+```
+
+Rules:
+- Open with `❌ Blockers` on its own line, followed by a blank line.
+- One blank line between each blocker entry.
+- Use ` — ` (space, em-dash, space) as the separator.
+- Include `:<line>` when the issue is tied to a specific line; omit it for file-wide or PR-level issues.
+- Each entry is a single paragraph — no bullet points, no numbering.
+- Nits go in separate `gh pr comment` calls prefixed with `nit:`, never in the `--request-changes` body.
+
+Example:
+
+```
+❌ Blockers
+
+ui/src/pages/test.tsx:1 — Unused import `HostEventsOverview` from `@/components/host-events`. It is imported but never referenced in the component. Remove it.
+
+.zenve/settings.json — Adds `run_schedule` field which is unrelated to "Add test page". This is a scope violation — unrelated drive-by changes should be in a separate PR.
+
+ui/src/pages/test.tsx:4 — Component is named `HomePage` but lives in `test.tsx`. The component name should match the file name per convention (e.g. `TestPage` in `test.tsx`, or rename the file to `home.tsx`).
+
+PR body is empty — No description, no linked issue, no referenced task or plan. Please add context explaining the purpose of this test page and whether it is intended to ship to production.
 ```
 
 ### Fallback when `gh pr review` fails
