@@ -141,17 +141,17 @@ Rules:
 
 Example (changes requested):
 
-```
+<example>
 ❌ Blockers
 
-ui/src/pages/test.tsx:1 — Unused import `HostEventsOverview` from `@/components/host-events`. It is imported but never referenced in the component. Remove it.
+**ui/src/pages/test.tsx:1** — Unused import `HostEventsOverview` from `@/components/host-events`. It is imported but never referenced in the component. Remove it.
 
-.zenve/settings.json — Adds `run_schedule` field which is unrelated to "Add test page". This is a scope violation — unrelated drive-by changes should be in a separate PR.
+**.zenve/settings.json** — Adds `run_schedule` field which is unrelated to "Add test page". This is a scope violation — unrelated drive-by changes should be in a separate PR.
 
-PR body is empty — No description, no linked issue, no referenced task or plan. Please add context explaining the purpose of this test page.
+**PR body is empty** — No description, no linked issue, no referenced task or plan. Please add context explaining the purpose of this test page.
 
-nit: ui/src/pages/test.tsx:4 — Component is named `HomePage` but lives in `test.tsx`. Rename to match file.
-```
+**nit: ui/src/pages/test.tsx:4** — Component is named `HomePage` but lives in `test.tsx`. Rename to match file.
+</example>
 
 Forbidden commands (never run these):
 

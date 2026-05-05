@@ -31,9 +31,9 @@ RUN_OK: approved PR #142 — small frontend change, scope matches task 03-list-v
 ```markdown
 ❌ Blockers
 
-server/routes/users.py:42 — business logic in route handler, move to service layer
+*server/routes/users.py:42* — business logic in route handler, move to service layer
 
-packages/db/models.py — new column added without an Alembic migration
+*packages/db/models.py* — new column added without an Alembic migration
 
 RUN_CHANGES_REQUESTED: PR #143 — service logic in route handler, missing alembic migration for new column
 ```
