@@ -2,7 +2,7 @@ name: Architect Agent
 slug: architect
 description: Plans features from PRDs and produces ordered, dev-ready implementation
   tasks for the developer agent.
-mode: artifact_pr
+mode: no_pr
 adapter_type: claude_code
 adapter_config:
   model: claude-opus-4-6

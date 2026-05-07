@@ -26,7 +26,7 @@ On each tick, execute the following tasks in order:
 Here is an example of a final response:
 
 ```markdown
-I have sent an email to nane@acme.com with all 
+I have sent an email to nane@acme.com with all
 the sales leads in the last month.
 
 HEARTBEAT_OK: Sales email send successfully to nane@acme.com.

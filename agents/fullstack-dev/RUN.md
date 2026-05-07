@@ -7,16 +7,17 @@
 
 ## On Start
 
-1. Read `{agent_dir}/memory/long_term.md` — load any persisted context.
-2. Read `{agent_dir}/memory/scratch.md` — load working notes from previous runs.
+1. Load the appropriate rules skill for your stack based on `{project_stack}` (e.g. `react-rules` for React projects, `fastapi-rules` for FastAPI projects) for baseline architecture standards.
+2. Read `{agent_dir}/memory/long_term.md` — load any persisted context.
+3. Read `{agent_dir}/memory/scratch.md` — load working notes from previous runs.
 
 ## Executing the Task
 
 - Complete the task described by the user.
-- If assigned an issue, read the issue title, description, and latest `react-architect` comment.
-- Extract the assigned task path from the architect comment, usually `docs/tasks/react/{feature}/{NN}-{task-slug}.md`.
-- If the task references `docs/tasks/react/`, read that task file first, then read its source plan in `docs/plans/react/` and source PRD in `docs/product/`.
-- Implement only the task scope and respect its out-of-scope list.
+- If assigned an issue, read the issue title, description, and latest architect comment.
+- The architect comment contains the full plan (`# Plan: ...`) — use its `## Changes` as your implementation steps and `## Verification` as acceptance criteria.
+- If a PRD path is referenced, read `docs/product/{feature}.md` for additional context.
+- Implement only what is listed in the plan's `## Changes` and respect anything explicitly excluded.
 - Stay within the tool permissions you have been given.
 - Use `{agent_dir}/memory/scratch.md` for notes you need within this run only.
 - Use `{agent_dir}/memory/long_term.md` for facts worth keeping across runs.

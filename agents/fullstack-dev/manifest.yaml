@@ -1,12 +1,14 @@
-name: FastAPI Developer
-slug: fastapi-dev
-description: Builds and maintains FastAPI services — routes, models, migrations, tests.
+name: Fullstack Developer
+slug: fullstack-dev
+description: Builds and maintains features across React and FastAPI stacks — routes, components, models, migrations, tests.
 adapter_type: claude_code
 mode: code_pr
 adapter_config:
   model: claude-opus-4-6
   max_tokens: 8096
 skills:
+  - react-setup
+  - react-rules
   - fastapi-setup
   - fastapi-monorepo-setup
   - fastapi-rules

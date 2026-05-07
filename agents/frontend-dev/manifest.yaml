@@ -1,0 +1,16 @@
+name: Frontend Developer
+slug: frontend-dev
+description: Builds and maintains frontend UI across React and other frontend stacks — components, state management, design systems, tests.
+mode: code_pr
+adapter_type: claude_code
+adapter_config:
+  model: claude-opus-4-6
+  max_tokens: 8096
+skills:
+  - react-setup
+  - react-rules
+tools:
+  - Read
+  - Write
+  - Bash
+heartbeat_interval_seconds: 0
