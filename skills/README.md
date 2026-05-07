@@ -6,17 +6,17 @@ A curated collection of skills to use with zenve cli.
 
 Install all skills:
 ```bash
-npx skills add zenve-ai/zenve-skills
+zenve skills add
 ```
 
 Install a specific skill:
 ```bash
-npx skills add zenve-ai/zenve-skills --skill fastapi-setup
+zenve skills add --skill fastapi-setup
 ```
 
-Install globally (available in all projects):
+List available skills from the remote registry:
 ```bash
-npx skills add zenve-ai/zenve-skills -g
+zenve skills list
 ```
 
 ---
@@ -43,7 +43,7 @@ Scaffolds a complete FastAPI project with clean layered architecture, auth, Dock
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill fastapi-setup
+zenve skills add --skill fastapi-setup
 ```
 
 **Usage:**
@@ -60,7 +60,7 @@ Audits any FastAPI project against a clean layered architecture — routes, serv
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill fastapi-rules
+zenve skills add --skill fastapi-rules
 ```
 
 **Usage:**
@@ -80,7 +80,7 @@ Scaffolds a complete React SPA with auth, routing, and state management ready to
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill react-setup
+zenve skills add --skill react-setup
 ```
 
 **Usage:**
@@ -100,7 +100,7 @@ Scaffolds a complete FastAPI monorepo using `uv` workspaces with 5 shared packag
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill fastapi-monorepo-setup
+zenve skills add --skill fastapi-monorepo-setup
 ```
 
 **Usage:**
@@ -118,7 +118,7 @@ Audits any React SPA project against a clean component architecture — pages, s
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill react-architect
+zenve skills add --skill react-architect
 ```
 
 **Usage:**
@@ -138,7 +138,7 @@ Scaffolds a new Zenve agent under `.zenve/agents/{slug}/` with the 5 required fi
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill zenve-create-agent
+zenve skills add --skill zenve-create-agent
 ```
 
 **Usage:**
@@ -158,7 +158,7 @@ Single source of truth for how a Zenve agent reads, writes, and clears memory ac
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill zenve-memory
+zenve skills add --skill zenve-memory
 ```
 
 **Usage:** referenced from an agent's `RUN.md` "On Start" step and listed under `skills:` in the agent's `manifest.yaml`.
