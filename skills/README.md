@@ -31,6 +31,7 @@ npx skills add zenve-ai/zenve-skills -g
 | [`react-setup`](#react-setup) | Scaffold a production-ready React 19 + Vite SPA |
 | [`react-architect`](#react-architect) | Audit any React SPA project against architecture rules |
 | [`zenve-create-agent`](#zenve-create-agent) | Scaffold a new Zenve agent (manifest + SOUL + AGENTS + RUN + HEARTBEAT) |
+| [`zenve-memory`](#zenve-memory) | Memory conventions and lifecycle for Zenve agents (long_term + scratch) |
 
 ---
 
@@ -146,6 +147,21 @@ claude "create a new zenve agent called fastapi-dev"
 claude "scaffold a zenve agent for product management"
 claude "add a new agent in .zenve"
 ```
+
+---
+
+## `zenve-memory`
+
+Single source of truth for how a Zenve agent reads, writes, and clears memory across runs. Agents load this skill on start so the contract lives in one place instead of being duplicated in every agent's `RUN.md`.
+
+**Includes:** `long_term.md` / `scratch.md` lifecycle · what to save vs. what to skip · stale-memory verification rules
+
+**Install:**
+```bash
+npx skills add zenve-ai/zenve-skills --skill zenve-memory
+```
+
+**Usage:** referenced from an agent's `RUN.md` "On Start" step and listed under `skills:` in the agent's `manifest.yaml`.
 
 ---
 

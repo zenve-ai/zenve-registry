@@ -20,7 +20,7 @@ Ask the user for any of these that aren't already provided:
   - `code_pr` — agent writes code and opens pull requests (typical for developer agents).
   - `artifact_pr` — agent writes Markdown artifacts only (PRDs, plans, task files); does not edit source code (typical for PM, architect, planner agents).
 - **`{tools}`** — comma list of tools the agent may use. Default: `Read, Write, Bash`. PM-style agents often add `WebSearch, WebFetch`.
-- **`{skills}`** — comma list of zenve-skills the agent can invoke. May be empty. Examples: `fastapi-setup, fastapi-monorepo-setup, fastapi-rules` for a backend developer.
+- **`{skills}`** — comma list of zenve-skills the agent can invoke. Always include `zenve-memory` as the baseline so the agent has cross-run memory; add stack-specific skills on top. Examples: `zenve-memory, fastapi-setup, fastapi-monorepo-setup, fastapi-rules` for a backend developer.
 
 If any input is ambiguous, show the user the choice with a one-line explanation of each option and proceed once they pick.
 
@@ -69,6 +69,7 @@ adapter_config:
   model: claude-sonnet-4-6
   max_tokens: 8096
 skills:
+  - zenve-memory
   - fastapi-setup
   - fastapi-monorepo-setup
   - fastapi-rules
@@ -169,15 +170,9 @@ Generic baseline. **Leave `{agent_dir}` literal in the file** — the Zenve runt
 ```markdown
 # Run Instructions
 
-## Memory
-
-- **Long-term memory** — persisted facts and decisions: `{agent_dir}/memory/long_term.md`
-- **Scratch memory** — ephemeral working notes (cleared between runs): `{agent_dir}/memory/scratch.md`
-
 ## On Start
 
-1. Read `{agent_dir}/memory/long_term.md` — load any persisted context.
-2. Read `{agent_dir}/memory/scratch.md` — load working notes from previous runs.
+1. Load the `zenve-memory` skill — for memory conventions and lifecycle.
 
 ## Executing the Task
 
@@ -186,14 +181,10 @@ Generic baseline. **Leave `{agent_dir}` literal in the file** — the Zenve runt
 - If the issue references a task file, read the task file first, then read its source plan and PRD for context.
 - Implement only the task scope and respect its out-of-scope list.
 - Stay within the tool permissions you have been given.
-- Use `{agent_dir}/memory/scratch.md` for notes you need within this run only.
-- Use `{agent_dir}/memory/long_term.md` for facts worth keeping across runs.
 
 ## IMPORTANT: Before ending the session:
 
-1. Update `{agent_dir}/memory/long_term.md` with any durable observations.
-2. Clear `{agent_dir}/memory/scratch.md` or leave a brief summary for the next run.
-3. Produce a final response that the gateway will store as the run result.
+Produce a final response that the gateway will store as the run result.
 
 Here is an example of a final response:
 
