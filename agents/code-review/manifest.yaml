@@ -7,9 +7,6 @@ adapter_type: claude_code
 adapter_config:
   model: claude-opus-4-6
   max_tokens: 8096
-skills:
-  - react-architect
-  - fastapi-rules
 tools:
   - Read
   - Bash

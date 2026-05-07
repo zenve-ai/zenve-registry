@@ -27,7 +27,7 @@ When the run starts:
 
 ## 3. Stack Detection
 
-Pick the architect skill at runtime — the manifest declares both, but you load only what's relevant.
+Pick the rules skill at runtime based on the detected stack.
 
 List changed files:
 ```
@@ -42,7 +42,7 @@ Apply these rules in order:
   - `package.json` containing a `react` dependency
   - `vite.config.*`, `tailwind.config.*`
 
-  → Load skill `react-architect`.
+  → Load skill `react-rules`.
 
 - **FastAPI PR** — at least one changed path matches any of:
   - `**/*.py` under `apps/api/`, `apps/*/src/**`, `packages/*/src/**`
@@ -67,7 +67,7 @@ Before producing the review body, you must have read:
 2. Full PR diff (`git diff origin/<base>...HEAD`).
 3. The linked issue (if any).
 4. The source task or plan file referenced in the PR description (if any).
-5. The architect skill matching the detected stack.
+5. The rules skill matching the detected stack.
 
 If the PR is non-trivial and you could not read the source task or plan, stop and signal `RUN_NEEDS_INPUT` with a specific question.
 
@@ -75,7 +75,7 @@ If the PR is non-trivial and you could not read the source task or plan, stop an
 
 Walk these checks against the diff. Treat skill rules as authoritative — this list is a starting point, not a substitute for the skill.
 
-### React PRs (per `react-architect` skill)
+### React PRs (per `react-rules` skill)
 
 - Component body order: declarations → effects → render helpers → composed children → return.
 - Store boundaries respected — no Redux state mutated outside its slice; no business logic in components.
@@ -194,7 +194,7 @@ You must not:
 
 A PR is ready to approve only when:
 
-- Stack was detected and the matching architect skill was loaded.
+- Stack was detected and the matching rules skill was loaded.
 - Source task / plan / issue was read (or the PR is small enough that none was needed and the PR body justifies that).
 - Diff was read in full.
 - No blockers from the §5 checklist.

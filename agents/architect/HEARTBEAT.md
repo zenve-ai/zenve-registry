@@ -29,4 +29,4 @@ End each heartbeat run with one of these signals:
 - Heartbeat runs have a hard timeout.
 - Do not start long-running processes that outlive the tick.
 - Do not prompt for user input — you are running unattended.
-- Do not edit frontend source code during heartbeat runs.
+- Do not edit source code during heartbeat runs.
