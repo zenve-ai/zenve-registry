@@ -9,7 +9,7 @@ adapter_config:
 skills:
   - fastapi-setup
   - fastapi-monorepo-setup
-  - fastapi-architect
+  - fastapi-rules
 tools:
   - Read
   - Write

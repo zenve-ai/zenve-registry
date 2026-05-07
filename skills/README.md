@@ -27,7 +27,7 @@ npx skills add zenve-ai/zenve-skills -g
 |---|---|
 | [`fastapi-setup`](#fastapi-setup) | Scaffold a production-ready FastAPI project |
 | [`fastapi-monorepo-setup`](#fastapi-monorepo-setup) | Scaffold a production-ready FastAPI monorepo with uv workspaces |
-| [`fastapi-architect`](#fastapi-architect) | Audit any FastAPI project against architecture rules |
+| [`fastapi-rules`](#fastapi-rules) | Audit any FastAPI project against architecture rules |
 | [`react-setup`](#react-setup) | Scaffold a production-ready React 19 + Vite SPA |
 | [`react-architect`](#react-architect) | Audit any React SPA project against architecture rules |
 | [`zenve-create-agent`](#zenve-create-agent) | Scaffold a new Zenve agent (manifest + SOUL + AGENTS + RUN + HEARTBEAT) |
@@ -53,13 +53,13 @@ claude "scaffold a fastapi app called myapi"
 
 ---
 
-## `fastapi-architect`
+## `fastapi-rules`
 
 Audits any FastAPI project against a clean layered architecture — routes, services, models, agents, db access patterns.
 
 **Install:**
 ```bash
-npx skills add zenve-ai/zenve-skills --skill fastapi-architect
+npx skills add zenve-ai/zenve-skills --skill fastapi-rules
 ```
 
 **Usage:**

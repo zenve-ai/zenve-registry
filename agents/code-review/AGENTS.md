@@ -50,7 +50,7 @@ Apply these rules in order:
   - `alembic/**`, `**/alembic.ini`
   - any Python file importing `fastapi`, `pydantic`, or `sqlalchemy`
 
-  → Load skill `fastapi-architect`.
+  → Load skill `fastapi-rules`.
 
 - **Mixed** — both rule sets match. Load both skills. Review each subset against its matching skill.
 
@@ -85,7 +85,7 @@ Walk these checks against the diff. Treat skill rules as authoritative — this 
 - API calls use the project's RTK Query / API client — no raw `fetch` scattered in components.
 - No backend logic snuck into the frontend.
 
-### FastAPI PRs (per `fastapi-architect` skill)
+### FastAPI PRs (per `fastapi-rules` skill)
 
 - Routes are thin — they validate input, call a service, return a response model. Business logic lives in services.
 - Request/response models are Pydantic v2 in `models/`; no ad-hoc dicts on the response.

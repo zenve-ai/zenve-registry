@@ -20,7 +20,7 @@ Ask the user for any of these that aren't already provided:
   - `code_pr` — agent writes code and opens pull requests (typical for developer agents).
   - `artifact_pr` — agent writes Markdown artifacts only (PRDs, plans, task files); does not edit source code (typical for PM, architect, planner agents).
 - **`{tools}`** — comma list of tools the agent may use. Default: `Read, Write, Bash`. PM-style agents often add `WebSearch, WebFetch`.
-- **`{skills}`** — comma list of zenve-skills the agent can invoke. May be empty. Examples: `fastapi-setup, fastapi-monorepo-setup, fastapi-architect` for a backend developer.
+- **`{skills}`** — comma list of zenve-skills the agent can invoke. May be empty. Examples: `fastapi-setup, fastapi-monorepo-setup, fastapi-rules` for a backend developer.
 
 If any input is ambiguous, show the user the choice with a one-line explanation of each option and proceed once they pick.
 
@@ -71,7 +71,7 @@ adapter_config:
 skills:
   - fastapi-setup
   - fastapi-monorepo-setup
-  - fastapi-architect
+  - fastapi-rules
 tools:
   - Read
   - Write

@@ -9,7 +9,7 @@ adapter_config:
   max_tokens: 8096
 skills:
   - react-architect
-  - fastapi-architect
+  - fastapi-rules
 tools:
   - Read
   - Bash
