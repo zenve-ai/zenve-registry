@@ -1,25 +1,32 @@
 ---
-name: react-architect
-description: Audits a React SPA project against architecture rules. Use when asked to "review components", "check architecture", "audit this react project", "does this follow react rules", or "review my frontend structure".
-version: 2.0.0
+name: react-rules
+description: React architecture rules for both auditing and development. Use when asked to "review components", "check architecture", "audit this react project", "does this follow react rules", "review my frontend structure", "add a new page", "add a new component", "add a new store domain", "implement this feature", or when starting any React development task.
+version: 1.0.0
 ---
 
-# React Architect Review
+# React Architecture Rules
 
-You are an architecture auditor for React SPAs. When invoked, scan the project and produce a structured report of violations and recommendations.
+> This skill is the **definitive source** for React architecture rules. Any agent (architect, dev, or otherwise) should load this skill for authoritative rules on components, store, structure, and design style.
 
-## Architecture Rules
+---
 
-### 1. Stack
+## 1. Stack
+
 Expected stack: **React 19 + Vite + TypeScript + Tailwind CSS v4 + shadcn/ui + Redux Toolkit + React Router**
 
+- pnpm (package management)
 - [ ] No legacy class components — function components only
 - [ ] Tailwind v4 syntax used (no `tailwind.config.js` color overrides — use CSS variables)
 - [ ] shadcn/ui primitives used for UI — not custom-rolled replacements
 
+**Key conventions:**
+- Path alias `@` → `src/` — all imports use `@/` paths
+- All filenames use **kebab-case** — no exceptions: `my-component.tsx`, `login-form.tsx`
+- Missing shadcn primitive → `pnpm dlx shadcn@latest add <component>` (installs into `src/components/ui/`)
+
 ---
 
-### 2. Structure
+## 2. Structure
 
 - `src/pages/` — one file per route; no components defined here
 - `src/store/{domain}/` — `slice.ts` + `api.ts` + `index.ts` per domain
@@ -40,7 +47,7 @@ Expected stack: **React 19 + Vite + TypeScript + Tailwind CSS v4 + shadcn/ui + R
 
 ---
 
-### 3. Component
+## 3. Components
 
 - [ ] **One component per file** — never define multiple components in a single file. Sub-components (tabs, sections, dialogs) must be extracted to `src/components/{feature}/`. Trivial one-liner wrappers used only once may stay inline.
 - [ ] Proper TypeScript types for all props — no `any`
@@ -90,17 +97,29 @@ const renderMain = () => {
 return <div>{renderMain()}</div>
 ```
 
+**Violations to flag:**
+- Multiple exported components in a single file
+- Early returns or nested ternaries in JSX
+- Utility functions defined inline in a component
+- `useDispatch` / `useSelector` used directly (must use `useAppDispatch` / `useAppSelector`)
+
 ---
 
-### 4. Store
+## 4. Store
 
 - [ ] Always use `useAppDispatch` / `useAppSelector` — never plain `useDispatch` / `useSelector`
-- [ ] Server data fetched via RTK Query in `api.ts`
-- [ ] Client-only state managed via Redux slice in `slice.ts`
+- [ ] **Server data** fetched via RTK Query in `api.ts` — never use `useState` for data fetched from an API
+- [ ] **Client-only state** managed via Redux slice in `slice.ts`
 - [ ] Each domain folder has: `slice.ts` + `api.ts` + `index.ts`
 - [ ] All domain stores registered in `src/store/index.ts`
 - [ ] All protected routes wrapped with `<PrivateRoute>`, public routes with `<PublicRoute>`
 - [ ] Routes defined in `src/routes.tsx` only
+
+**`store/{domain}/index.ts` pattern:**
+```ts
+export * from './slice'
+export * from './api'
+```
 
 #### Adding a domain (expected pattern)
 1. Types → `src/types.ts`
@@ -109,15 +128,26 @@ return <div>{renderMain()}</div>
 4. Page → `src/pages/{domain}.tsx`
 5. Route → `src/routes.tsx`
 
-### 5. Design Style
+---
+
+## 5. Design Style
 
 - [ ] **Read the project's `CLAUDE.md`** — if a design style section is defined, components and pages must follow it
 - [ ] Flag any UI patterns that visibly contradict the documented design rules (e.g. wrong border-radius, wrong button size, wrong color usage, wrong typography)
-- [ ] If no design style is defined in `CLAUDE.md`, skip this check
+- [ ] If no design style is defined in `CLAUDE.md`, use shadcn/ui defaults and standard Tailwind conventions
+
+When a `{agent_dir}/DESIGN.md` is present, read it before building any UI and follow it strictly:
+- Match the spacing, color, corner style, and component patterns defined there
+- Use `cn()` for all className merging
+- Prefer shadcn primitives over custom-built UI elements
 
 ---
 
-## Review Process
+## Architecture Review
+
+> **This section applies when the skill is used by an architecture review agent.**
+
+### Review Process
 
 1. **Scan the project structure** — verify directories exist and are correctly placed (section 2)
 2. **Check all filenames** — enforce kebab-case across `src/`; check barrel `index.ts` files in feature folders
@@ -130,11 +160,7 @@ return <div>{renderMain()}</div>
 9. **Check hooks usage** — `useAppDispatch` / `useAppSelector` only
 10. **Check design style** — read `CLAUDE.md`; if a design style is defined, spot-check components against it and flag deviations
 
----
-
-## Output Format
-
-Produce a report in this structure:
+### Output Format
 
 ```
 ## Architecture Review
