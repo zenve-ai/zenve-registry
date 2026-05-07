@@ -1134,6 +1134,10 @@ Use these slash commands before starting related work:
 - `/simplify` — after finishing code changes, to review for reuse and quality
 ```
 
+### `DESIGN.md`
+
+Copy the contents of `react-rules/DESIGN.md` (bundled with the react-rules skill) into `{project}/DESIGN.md`. This is the default design system for the project.
+
 ---
 
 ## After Scaffolding — Tell the User

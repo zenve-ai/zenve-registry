@@ -132,11 +132,11 @@ export * from './api'
 
 ## 5. Design Style
 
-- [ ] **Read the project's `CLAUDE.md`** — if a design style section is defined, components and pages must follow it
+- [ ] **The project must have a `DESIGN.md` file** at the root — if missing, copy the default one bundled with this skill (`react-rules/DESIGN.md`) to the project root and inform the user that a default design system has been applied
+- [ ] **Read `DESIGN.md`** before building any UI — components and pages must follow it
 - [ ] Flag any UI patterns that visibly contradict the documented design rules (e.g. wrong border-radius, wrong button size, wrong color usage, wrong typography)
-- [ ] If no design style is defined in `CLAUDE.md`, use shadcn/ui defaults and standard Tailwind conventions
 
-When a `{agent_dir}/DESIGN.md` is present, read it before building any UI and follow it strictly:
+When a `DESIGN.md` is present, read it before building any UI and follow it strictly:
 - Match the spacing, color, corner style, and component patterns defined there
 - Use `cn()` for all className merging
 - Prefer shadcn primitives over custom-built UI elements
@@ -158,7 +158,7 @@ When a `{agent_dir}/DESIGN.md` is present, read it before building any UI and fo
 7. **Read form files** — check `FieldGroup` / `FieldLabel` / `FieldDescription` usage; no bare `Label`
 8. **Check imports** — no relative cross-boundary imports, all use `@/`
 9. **Check hooks usage** — `useAppDispatch` / `useAppSelector` only
-10. **Check design style** — read `CLAUDE.md`; if a design style is defined, spot-check components against it and flag deviations
+10. **Check design style** — verify `DESIGN.md` exists at the project root; if missing, copy the default `DESIGN.md` bundled with this skill to the project root and inform the user. If present, read it and spot-check components against it, flagging deviations
 
 ### Output Format
 
