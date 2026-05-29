@@ -32,6 +32,7 @@ zenve skills list
 | [`react-architect`](#react-architect) | Audit any React SPA project against architecture rules |
 | [`zenve-create-agent`](#zenve-create-agent) | Scaffold a new Zenve agent (manifest + SOUL + AGENTS + RUN + HEARTBEAT) |
 | [`zenve-memory`](#zenve-memory) | Memory conventions and lifecycle for Zenve agents (long_term + scratch) |
+| [`zenve-issues`](#zenve-issues) | Read and manage Zenve runtime issues (CRUD + comments + labels) via curl |
 
 ---
 
@@ -162,6 +163,27 @@ zenve skills add --skill zenve-memory
 ```
 
 **Usage:** referenced from an agent's `RUN.md` "On Start" step and listed under `skills:` in the agent's `manifest.yaml`.
+
+---
+
+## `zenve-issues`
+
+Teaches an agent to read and manage issues in the Zenve runtime via its HTTP API with `curl` — list, get, create, update, close, and delete issues, plus comments and labels. The issue routes need no authentication. Best run by an agent inside the runtime, where `ZENVE_WORKSPACE_ID` is already set.
+
+**Includes:** assigned-issue workflow (read → comment → close) · full CRUD curl recipes · comment + label endpoints · `${ZENVE_RUNTIME_URL:-http://localhost:8001}` / `$ZENVE_WORKSPACE_ID` conventions · workspace-id fallback discovery · schema + error reference
+
+**Install:**
+```bash
+zenve skills add --skill zenve-issues
+```
+
+**Usage:**
+```bash
+claude "read my assigned issue #42"
+claude "comment on the issue that the PR is ready, then close it"
+claude "list the open issues"
+claude "create an issue for the login bug and assign react-dev"
+```
 
 ---
 
