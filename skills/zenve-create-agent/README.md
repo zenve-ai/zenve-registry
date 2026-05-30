@@ -16,7 +16,7 @@ Inside a Zenve project (one with a `.zenve/` folder), just tell Claude:
 > "scaffold a zenve agent for product management"
 > "add a new agent in .zenve"
 
-The skill will ask for the agent's display name, slug, mode (`code_pr` or `artifact_pr`), tools, and skills, then write the agent directory.
+The skill will ask for the agent's display name, slug, mode (`code_pr` or `artifact_pr`), tools, and skills, then write the agent directory. Every agent gets `zenve-memory` and `zenve-issues` as baseline skills, and the generated `RUN.md` / `AGENTS.md` / `HEARTBEAT.md` already wire in the issue read/report loop.
 
 ## What gets generated
 

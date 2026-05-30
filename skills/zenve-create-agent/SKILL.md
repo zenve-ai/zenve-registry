@@ -20,7 +20,7 @@ Ask the user for any of these that aren't already provided:
   - `code_pr` — agent writes code and opens pull requests (typical for developer agents).
   - `artifact_pr` — agent writes Markdown artifacts only (PRDs, plans, task files); does not edit source code (typical for PM, architect, planner agents).
 - **`{tools}`** — comma list of tools the agent may use. Default: `Read, Write, Bash`. PM-style agents often add `WebSearch, WebFetch`.
-- **`{skills}`** — comma list of zenve-skills the agent can invoke. Always include `zenve-memory` as the baseline so the agent has cross-run memory; add stack-specific skills on top. Examples: `zenve-memory, fastapi-setup, fastapi-monorepo-setup, fastapi-rules` for a backend developer.
+- **`{skills}`** — comma list of zenve-skills the agent can invoke. Always include `zenve-memory` (cross-run memory) and `zenve-issues` (reading/reporting on assigned issues) as the baseline; add stack-specific skills on top. Examples: `zenve-memory, zenve-issues, fastapi-setup, fastapi-monorepo-setup, fastapi-rules` for a backend developer. Drop `zenve-issues` only if the agent genuinely never receives issue-based work.
 
 If any input is ambiguous, show the user the choice with a one-line explanation of each option and proceed once they pick.
 
@@ -54,7 +54,7 @@ heartbeat_interval_seconds: 0
 ```
 
 Substitution rules:
-- `{skills_yaml_list}` — render each skill as `  - skill-name`. If empty, render `[]` on the same line as `skills:` (i.e. `skills: []`).
+- `{skills_yaml_list}` — render each skill as `  - skill-name`. Always lead with `zenve-memory` and `zenve-issues`, then the stack-specific skills. The list is never empty — these two baselines are always present.
 - `{tools_yaml_list}` — render each tool as `  - ToolName`. Tools list must not be empty.
 
 Example for a FastAPI developer agent:
@@ -70,6 +70,7 @@ adapter_config:
   max_tokens: 8096
 skills:
   - zenve-memory
+  - zenve-issues
   - fastapi-setup
   - fastapi-monorepo-setup
   - fastapi-rules
@@ -119,7 +120,7 @@ You are a **{role}**. _TODO: describe what this agent builds, fixes, or produces
 
 ### `AGENTS.md`
 
-Skeleton with the section structure used across existing agents. Headings stay; fill the body from the project context. If a section doesn't apply to this agent, delete the section rather than leaving it empty.
+Skeleton with the section structure used across existing agents. Headings stay; fill the body from the project context. If a section doesn't apply to this agent, delete the section rather than leaving it empty. **Exception: section 2 (Task Intake) ships pre-filled and mode-neutral — keep it as-is and only add role-specific detail inline; do not rewrite the issue workflow.**
 
 ```markdown
 # You are {agent_name}
@@ -132,11 +133,32 @@ You are part of the team that is working on {project_name}, your role is {role}.
 
 _TODO_
 
-## 2. Issue Intake
+## 2. Task Intake
 
-<!-- How does this agent receive work? What does an "issue" look like? Where does it look for assigned task files, plans, PRDs? What signals does it return when blocked or when an issue is malformed? -->
+<!-- This is the standard Zenve intake. It is mode-neutral — keep it as-is. Add role-specific detail (where this agent looks for plans, PRDs, task files) inline, but do not remove the issue workflow. -->
 
-_TODO_
+Your input is one of two things:
+
+- **A direct task message** — e.g. "create a hello world page". Just do it; there is no issue to fetch.
+- **An issue reference** — e.g. "work on issue #2". The issue's content is **not** handed to you; you fetch it yourself with the **`zenve-issues`** skill against workspace `{workspace_id}` — no workspace lookup needed.
+
+If the prompt does not reference an issue, treat the message itself as the task and skip the steps below.
+
+An issue has no fixed author or shape. Its description might be a one-line ask from a user, a detailed write-up from another agent, or anything in between — and its comments may or may not include a plan posted by an architect/planner agent. Read the issue and all its comments, then infer from context what the actual task is and how much guidance you already have.
+
+When given an issue number:
+
+1. Load the `zenve-issues` skill.
+2. Read the issue (title, description, state, labels) by its number.
+3. Read all of the issue's comments (oldest → newest).
+4. Build the task from everything you read:
+   - If a comment contains a plan (it starts with `# Plan: {Feature Name}`), use its `## Changes` as your ordered steps and `## Verification` as your acceptance criteria, and treat anything not in `## Changes` as out of scope.
+   - Otherwise, treat the issue description plus the most recent instructive comment(s) as the source of truth, and scope the work yourself.
+5. <!-- TODO: role-specific context lookup, e.g. "If a PRD path is referenced, read `docs/product/{feature}.md`." -->
+
+If the task is ambiguous, comments conflict with each other or with the description, or the work falls outside your scope, stop: post a comment on the issue describing the specific blocker (via `zenve-issues`), leave the issue **open**, and return `RUN_NEEDS_INPUT`.
+
+When the work is done, report back on the issue: use `zenve-issues` to post a result comment (PR link, artifact path, or a short summary, depending on your mode). Do **not** close the issue — leave that to the reviewer or orchestrator. See `RUN.md` for the full completion loop.
 
 ## 3. Project Structure
 
@@ -177,19 +199,38 @@ Generic baseline. **Leave `{agent_dir}` literal in the file** — the Zenve runt
 ## Executing the Task
 
 - Complete the task described by the user.
-- If assigned an issue, read the issue title, description, and latest architect/planner comment.
-- If the issue references a task file, read the task file first, then read its source plan and PRD for context.
+- When the prompt references an issue (e.g. "work on issue #N"), load the `zenve-issues` skill and use it to read the issue (title, description, comments) against workspace `{workspace_id}` — no workspace lookup is needed.
+- Infer the task from the issue and its comments together. The description may come from a user or another agent, and the comments may or may not include an architect/planner plan.
+- If a comment contains a plan (`# Plan: ...`), follow its `## Changes` as your steps and `## Verification` as acceptance criteria, and respect anything explicitly excluded. Otherwise, treat the issue description and the latest instructive comments as the source of truth and scope the work yourself.
 - Implement only the task scope and respect its out-of-scope list.
 - Stay within the tool permissions you have been given.
+
+## On Completion (when working an issue)
+
+Run the full loop back to the issue using the `zenve-issues` skill:
+
+- **On success:** post a comment on the issue reporting the result (PR link, artifact path, or a short summary, depending on your mode). Signal `RUN_OK`.
+- **When blocked:** post a comment describing the blocker. Signal `RUN_NEEDS_INPUT`.
+- **On failure:** post a comment with what failed and why. Signal `RUN_FAILED`.
+
+Do **not** close the issue — leave that to the reviewer or orchestrator.
 
 ## IMPORTANT: Before ending the session:
 
 Produce a final response that the gateway will store as the run result.
 
+**If you worked on an issue, you must also post that result as a comment on the issue** using the `zenve-issues` skill before you end — the gateway response alone is not visible on the issue. Post the comment first, then return the matching signal line as your final response. The comment and the signal should report the same outcome. Do not close the issue.
+
 Here is an example of a final response:
 
 ```markdown
 RUN_OK: PR #123 created for issue X
+```
+
+And the matching comment posted on issue X via `zenve-issues`:
+
+```markdown
+Done — opened PR #123 implementing this.
 ```
 
 ## Signalling Outcomes
@@ -218,6 +259,10 @@ On each tick, execute the following tasks in order:
 
 <!-- No tasks defined yet. Add tasks here — each will run on every tick. -->
 
+> The `zenve-issues` skill is available if a defined tick task needs to read or list issues (e.g. polling for assigned open issues). No issue task is defined by default.
+>
+> **Whenever a tick works on an issue, post a result comment on that issue via `zenve-issues` before the tick ends** — reporting what was done, the blocker, or the failure. Do **not** close the issue. This is the same convention as a normal run (see `RUN.md`).
+
 ## On Each Tick
 
 1. Read `{agent_dir}/memory/long_term.md` — load persisted context.
@@ -229,9 +274,10 @@ On each tick, execute the following tasks in order:
 
 ## Before ending the session:
 
-1. Update `{agent_dir}/memory/long_term.md` with any durable observations.
-2. Clear `{agent_dir}/memory/scratch.md` or leave a brief summary for the next run.
-3. Produce a final response that the gateway will store as the run result.
+1. If this tick worked on any issue, post a result comment on it via `zenve-issues` (do not close it).
+2. Update `{agent_dir}/memory/long_term.md` with any durable observations.
+3. Clear `{agent_dir}/memory/scratch.md` or leave a brief summary for the next run.
+4. Produce a final response that the gateway will store as the run result.
 
 Here is an example of a final response:
 
@@ -281,8 +327,9 @@ Two kinds of placeholders. Get this right or the agent won't run correctly.
 | `{agent_name}` | `SOUL.md`, `AGENTS.md`, `HEARTBEAT.md` | Display name from `manifest.yaml` |
 | `{project_name}` | `SOUL.md`, `AGENTS.md` | Parent project name |
 | `{agent_dir}` | `RUN.md`, `HEARTBEAT.md` | Path to the agent directory at runtime |
+| `{workspace_id}` | `RUN.md`, `AGENTS.md` | Workspace id the `zenve-issues` skill calls against (`$ZENVE_WORKSPACE_ID`) |
 
-Note: `{agent_name}` appears in both tables — it is **substituted in `manifest.yaml`** (concrete display name) but **left literal everywhere else** (the gateway resolves it from the manifest at runtime). After writing, verify `SOUL.md`, `AGENTS.md`, `HEARTBEAT.md`, and `RUN.md` still contain the literal `{agent_name}` / `{project_name}` / `{agent_dir}` strings.
+Note: `{agent_name}` appears in both tables — it is **substituted in `manifest.yaml`** (concrete display name) but **left literal everywhere else** (the gateway resolves it from the manifest at runtime). After writing, verify `SOUL.md`, `AGENTS.md`, `HEARTBEAT.md`, and `RUN.md` still contain the literal `{agent_name}` / `{project_name}` / `{agent_dir}` / `{workspace_id}` strings.
 
 ## 5. After scaffolding — tell the user
 
@@ -310,4 +357,5 @@ Then:
 
 - Do not scaffold a `memory/` directory. The agent creates it on first run.
 - Do not invent skills that don't exist — only reference skills that are installed in the project (look in `.claude/skills/` or `claude-skills.json`).
-- The `RUN.md` and `HEARTBEAT.md` baselines above are generic. Existing agents in `zenve-agents/` customize phrasing and path references for their role; do the same for the new agent after scaffolding rather than at scaffold time.
+- `zenve-memory` and `zenve-issues` are the baseline skills for every agent: memory gives cross-run persistence, issues gives the read/report loop the `RUN.md`, `AGENTS.md`, and `HEARTBEAT.md` baselines depend on. List both in the manifest unless the agent genuinely never receives issue-based work.
+- The `RUN.md` and `HEARTBEAT.md` baselines above already wire in the `zenve-issues` workflow and are mode-neutral. Existing agents in `agents/` (e.g. `frontend-dev`) customize phrasing and path references for their role; do the same for the new agent after scaffolding rather than at scaffold time.
